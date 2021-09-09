@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template</title>
+    <link rel="icon" type="image/png" href="https://www.google.com/s2/favicons?domain=css-tricks.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-2/css/all.min.css">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap");
+        html {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: whitesmoke;
+            color: black;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 700;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quote-container {
+            width: auto;
+            max-width: 900px;
+            padding: 20px 30px;
+            border-radius: 10px;
+            background-color: rgba(200, 200, 200, 0.4);
+            box-shadow: 0 10px 10px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .quote-text {
+            font-size: 2.75rem;
+        }
+
+        .long-quote {
+            font-size: 2rem;
+        }
+
+        .fa-quote-left {
+            font-size: 4rem;
+        }
+
+        .quote-author {
+            margin-top: 15px;
+            font-size: 2rem;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .button-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            cursor: pointer;
+            font-size: 1.2rem;
+            height: 2.5rem;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            background-color: #333;
+            outline: none;
+            padding: 0.5rem 1.8rem;
+            box-shadow: 0 0.3rem rgba(121,121,121, 0.65);
+        }
+
+        button:hover {
+            filter: brightness(130%);
+        }
+
+        button:active {
+            transform: translate(0, 0.3rem);
+            box-shadow: 0, 0.1rem rgba(255,255,255, 0.65);
+        }
+
+        .twitter-button:hover {
+            color: #38a1f3;
+        }
+
+        .fa-twitter {
+            font-size: 1.5rem;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #333;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Media Query */
+        @media screen and (max-width: 1000px) {
+            .quote-container {
+                margin: auto 10px;
+            }
+
+            .quote-text {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quote-container" id="quote-container">
+        <!-- Quote -->
+        <div class="quote-text">
+            <i class="fas fa-quote-left"></i>
+            <span id="quote"></span>
+            <!-- Author -->
+            <div class="quote-author">
+                <span id="author"></span>
+            </div>
+            <div class="button-container">
+                <button class="twitter-button" id="twitter" title="Tweet this!">
+                    <i class="fab fa-twitter"></i>
+                </button>
+                <button id="new-quote">New Quote</button>
+            </div>
+        </div>
+    </div>
+    <!-- Loader -->
+    <div class="loader" id="loader"></div>
+    <!-- Script -->
+    <script>
+        const quoteContainer = document.getElementById("quote-container");
+        const quoteText = document.getElementById("quote");
+        const authorText = document.getElementById("author");
+        const twitterBtn = document.getElementById("twitter");
+        const newQuoteBtn = document.getElementById("new-quote");
+        const loader = document.getElementById("loader");
+
+        // Show Loading
+        function loading() {
+            loader.hidden = false;
+            quoteContainer.hidden = true;
+        }
+
+        // Hide Loading
+        function complete() {
+            loader.hidden = true;
+            quoteContainer.hidden = false;
+        }
+
+        let apiQuotes = []
+
+        // Show new Quote
+        function newQuote() {
+            loading();
+            // Pick a random quote from apiQuotes array
+            const random_numb = Math.floor(Math.random() * apiQuotes.length);
+            const quote = apiQuotes[random_numb];
+
+            // check if author field is null
+            quote.author == null ? 
+            authorText.textContent = "unknown" : 
+            authorText.textContent = quote.author;
+
+            // check Quote length to determine styling
+            quote.text.length > 50 ? 
+            quoteText.classList.add('long-quote') : 
+            quoteText.classList.remove('long-quote');
+
+            // set text content, hide loader
+            quoteText.textContent = quote.text
+            complete();
+        }
+
+        // Get Quotes from API
+        async function getQuotes() {
+            loading();
+            const apiUrl = 'https://type.fit/api/quotes';
+            try {
+                const response = await fetch(apiUrl);
+                apiQuotes = await response.json()
+                newQuote();
+            } catch (error) {
+                // Catch Error here
+            }
+        }
+
+        // Tweet Quote
+        function tweetQuote() {
+            const twitterUrl = `https://twitter/intent/tweet?text=${quoteText.textContent} - ${authorText.textContent}`;
+            window.open(twitterUrl, '_blank');
+        }
+
+        newQuoteBtn.addEventListener('click', newQuote)
+        twitterBtn.addEventListener('click', tweetQuote)
+        // On Load
+
+        getQuotes();
+    </script>
+</body>
+</html>
