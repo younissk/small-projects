@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300&display=swap");
+
+body {
+  font-family: "Rubik", sans-serif;
+}
+
+.container a {
+  text-decoration: none;
+  color: black;
+}
+
+.container {
+  margin: 20px;
+  padding: 20px;
+  background-color: whitesmoke;
+  border-radius: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  margin: 20px;
+}
